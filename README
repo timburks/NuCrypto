@@ -1,0 +1,7 @@
+
+NuCrypto is a simple wrapper around cryptographic functions in OpenSSL
+and Apple's CommonCrypto library.
+
+NuCrypto is released under the Apache License, version 2.0.
+
+Copyright 2010, Radtastical, Inc.
