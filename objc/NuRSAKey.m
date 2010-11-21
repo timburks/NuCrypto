@@ -96,6 +96,11 @@ static NSString *string_for_object(id object)
     return RSA_size(key);
 }
 
+- (int) check
+{
+	return RSA_check_key(key);
+}
+
 - (NSString *) modulus
 {
     return [NSString stringWithCString:BN_bn2hex(key->n) encoding:NSUTF8StringEncoding];
@@ -145,7 +150,7 @@ static NSData *data(NSString *string)
     int maxSize = RSA_size(key);
     char *output = (char *) malloc(maxSize * sizeof(char));
     int bytes = RSA_public_encrypt([data length], [data bytes], output, key, RSA_PKCS1_PADDING);
-    return [NSData dataWithBytes:output length:bytes];
+	return (bytes > 0) ? [NSData dataWithBytes:output length:bytes] : nil;
 }
 
 - (NSData *) encryptDataWithPrivateKey:(NSData *) data
@@ -153,7 +158,7 @@ static NSData *data(NSString *string)
     int maxSize = RSA_size(key);
     char *output = (char *) malloc(maxSize * sizeof(char));
     int bytes = RSA_private_encrypt([data length], [data bytes], output, key, RSA_PKCS1_PADDING);
-    return [NSData dataWithBytes:output length:bytes];
+    return (bytes > 0) ? [NSData dataWithBytes:output length:bytes] : nil;
 }
 
 - (NSData *) decryptDataWithPublicKey:(NSData *) data
@@ -161,7 +166,7 @@ static NSData *data(NSString *string)
     int maxSize = RSA_size(key);
     char *output = (char *) malloc(maxSize * sizeof(char));
     int bytes = RSA_public_decrypt([data length], [data bytes], output, key, RSA_PKCS1_PADDING);
-    return [NSData dataWithBytes:output length:bytes];
+    return (bytes > 0) ? [NSData dataWithBytes:output length:bytes] : nil;
 }
 
 - (NSData *) decryptDataWithPrivateKey:(NSData *) data
@@ -169,7 +174,7 @@ static NSData *data(NSString *string)
     int maxSize = RSA_size(key);
     char *output = (char *) malloc(maxSize * sizeof(char));
     int bytes = RSA_private_decrypt([data length], [data bytes], output, key, RSA_PKCS1_PADDING);
-    return [NSData dataWithBytes:output length:bytes];
+	return (bytes > 0) ? [NSData dataWithBytes:output length:bytes] : nil;
 }
 
 @end
