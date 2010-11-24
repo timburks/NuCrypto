@@ -113,26 +113,26 @@ static NSString *string_for_object(id object)
 
 static NSData *data(NSString *string)
 {
-    [NSData dataWithHexEncodedString:string];
+    return [NSData dataWithHexEncodedString:string];
 }
 
 - (NSDictionary *) dictionaryRepresentation
 {
     NSMutableDictionary *representation = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-    data([NSString stringWithCString:BN_bn2hex(key->n) encoding:NSUTF8StringEncoding]), @"n",
-        data([NSString stringWithCString:BN_bn2hex(key->e) encoding:NSUTF8StringEncoding]), @"e",
-        nil];
+                                           data([NSString stringWithCString:BN_bn2hex(key->n) encoding:NSUTF8StringEncoding]), @"n",
+                                           data([NSString stringWithCString:BN_bn2hex(key->e) encoding:NSUTF8StringEncoding]), @"e",
+                                           nil];
     if (key->d) {
         [representation setObject:data([NSString stringWithCString:BN_bn2hex(key->d) encoding:NSUTF8StringEncoding])
-            forKey:@"d"];
+                           forKey:@"d"];
     }
     if (key->p) {
         [representation setObject:data([NSString stringWithCString:BN_bn2hex(key->p) encoding:NSUTF8StringEncoding])
-            forKey:@"p"];
+                           forKey:@"p"];
     }
     if (key->q) {
         [representation setObject:data([NSString stringWithCString:BN_bn2hex(key->q) encoding:NSUTF8StringEncoding])
-            forKey:@"q"];
+                           forKey:@"q"];
     }
     return representation;
 }
@@ -140,15 +140,15 @@ static NSData *data(NSString *string)
 - (NSDictionary *) publicKeyDictionaryRepresentation
 {
     return [NSDictionary dictionaryWithObjectsAndKeys:
-    data([NSString stringWithCString:BN_bn2hex(key->n) encoding:NSUTF8StringEncoding]), @"n",
-        data([NSString stringWithCString:BN_bn2hex(key->e) encoding:NSUTF8StringEncoding]), @"e",
-        nil];
+            data([NSString stringWithCString:BN_bn2hex(key->n) encoding:NSUTF8StringEncoding]), @"n",
+            data([NSString stringWithCString:BN_bn2hex(key->e) encoding:NSUTF8StringEncoding]), @"e",
+            nil];
 }
 
 - (NSData *) encryptDataWithPublicKey:(NSData *) data
 {
     int maxSize = RSA_size(key);
-    char *output = (char *) malloc(maxSize * sizeof(char));
+    unsigned char *output = (unsigned char *) malloc(maxSize * sizeof(char));
     int bytes = RSA_public_encrypt([data length], [data bytes], output, key, RSA_PKCS1_PADDING);
 	return (bytes > 0) ? [NSData dataWithBytes:output length:bytes] : nil;
 }
@@ -156,7 +156,7 @@ static NSData *data(NSString *string)
 - (NSData *) encryptDataWithPrivateKey:(NSData *) data
 {
     int maxSize = RSA_size(key);
-    char *output = (char *) malloc(maxSize * sizeof(char));
+    unsigned char *output = (unsigned char *) malloc(maxSize * sizeof(char));
     int bytes = RSA_private_encrypt([data length], [data bytes], output, key, RSA_PKCS1_PADDING);
     return (bytes > 0) ? [NSData dataWithBytes:output length:bytes] : nil;
 }
@@ -164,7 +164,7 @@ static NSData *data(NSString *string)
 - (NSData *) decryptDataWithPublicKey:(NSData *) data
 {
     int maxSize = RSA_size(key);
-    char *output = (char *) malloc(maxSize * sizeof(char));
+    unsigned char *output = (unsigned char *) malloc(maxSize * sizeof(char));
     int bytes = RSA_public_decrypt([data length], [data bytes], output, key, RSA_PKCS1_PADDING);
     return (bytes > 0) ? [NSData dataWithBytes:output length:bytes] : nil;
 }
@@ -172,7 +172,7 @@ static NSData *data(NSString *string)
 - (NSData *) decryptDataWithPrivateKey:(NSData *) data
 {
     int maxSize = RSA_size(key);
-    char *output = (char *) malloc(maxSize * sizeof(char));
+    unsigned char *output = (unsigned char *) malloc(maxSize * sizeof(char));
     int bytes = RSA_private_decrypt([data length], [data bytes], output, key, RSA_PKCS1_PADDING);
 	return (bytes > 0) ? [NSData dataWithBytes:output length:bytes] : nil;
 }

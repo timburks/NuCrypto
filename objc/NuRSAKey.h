@@ -17,7 +17,8 @@
 
 #import <Foundation/Foundation.h>
 
-typedef struct rsa_st RSA; 
+#include <openssl/err.h>
+#include <openssl/ssl.h>
 
 @interface NuRSAKey : NSObject
 {
