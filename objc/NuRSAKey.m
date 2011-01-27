@@ -48,6 +48,30 @@
     return self;
 }
 
+- (id) initWithModulusData:(NSData *) modulus exponentData:(NSData *) exponent
+{
+    if (self = [super init]) {
+        key = RSA_new();
+        if (modulus) {
+            key->n = BN_bin2bn([modulus bytes], [modulus length], NULL);
+        }
+        if (exponent) {
+			key->e = BN_bin2bn([exponent bytes], [exponent length], NULL);
+        }
+    }
+    return self;
+}
+
+- (id) initWithPEMData:(NSData *) data {
+	if (self = [super init]) {
+		BIO *b = BIO_new(BIO_s_mem());
+		BIO_write(b, [data bytes], [data length]);
+		key = PEM_read_bio_RSAPrivateKey(b, &key, NULL, NULL);
+	}
+	return self;
+}
+
+
 static NSString *string_for_object(id object)
 {
     if ([object isKindOfClass:[NSData class]]) {
