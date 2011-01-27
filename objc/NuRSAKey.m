@@ -1,6 +1,6 @@
 /*!
  @file NuRSAKey.m
- @copyright Copyright (c) 2010 Radtastical, Inc.
+ @copyright Copyright (c) 2011 Radtastical, Inc.
  
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -62,13 +62,34 @@
     return self;
 }
 
-- (id) initWithPEMData:(NSData *) data {
+- (id) initWithPEMPrivateKeyData:(NSData *) data {
 	if (self = [super init]) {
 		BIO *b = BIO_new(BIO_s_mem());
 		BIO_write(b, [data bytes], [data length]);
 		key = PEM_read_bio_RSAPrivateKey(b, &key, NULL, NULL);
+		if (!key) {
+			[self release];
+			return nil;
+		}
 	}
 	return self;
+}
+
+- (id) initWithDERPublicKeyData:(NSData *) data {
+	if (self = [super init]) {
+		const unsigned char *buffer, *next;
+		next = buffer = (const unsigned char *) [data bytes];
+		key = d2i_RSAPublicKey(NULL, &next, [data length]);		
+	}
+	return self;
+}
+
+- (NSData *) DERPublicKeyData {
+	unsigned char *buffer, *next;
+	int length = i2d_RSAPublicKey(key, NULL);
+	next = buffer = (unsigned char *) malloc (length);			
+	i2d_RSAPublicKey(key, &next);	
+	return [NSData dataWithBytes:buffer length:length];
 }
 
 
